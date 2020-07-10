@@ -1,0 +1,575 @@
+[
+	{
+		"command": "help",
+		"inputs": [
+			"help",
+			"도움",
+			"사용법",
+			"도움말"
+		],
+		"options": [],
+		"short_usage": "사용법 안내",
+		"usage": "봇에 대해 표시합니다",
+		"visible": true,
+		"public": false
+	},
+	{
+		"command": "debug",
+		"inputs": [
+			"debug",
+			"디버그"
+		],
+		"options": [
+			{
+				"name": "embed",
+				"inputs": [
+					"embed",
+					"임베드"
+				],
+				"need_arg": true,
+				"usage": "JSON.parse() 이용하여 임베드 (https://leovoel.github.io/embed-visualizer/ 참고)"
+			},
+			{
+				"name": "uptime",
+				"inputs": [
+					"uptime",
+					"업타임"
+				],
+				"need_arg": false,
+				"usage": "시스템 업타임"
+			},
+			{
+				"name": "process",
+				"inputs": [
+					"process",
+					"프로세스"
+				],
+				"need_arg": false,
+				"usage": "프로세스 업타임"
+			},
+			{
+				"name": "chanid",
+				"inputs": [
+					"chanid",
+					"채널id",
+					"채널아이디"
+				],
+				"need_arg": false,
+				"usage": "채널 ID"
+			},
+			{
+				"name": "restart",
+				"inputs": [
+					"restart",
+					"재시작"
+				],
+				"need_arg": false,
+				"usage": "재시작"
+			},
+			{
+				"name": "database",
+				"inputs": [
+					"database",
+					"db",
+					"데이터베이스"
+				],
+				"need_arg": false,
+				"usage": "데이터베이스"
+			},
+			{
+				"name": "stoptyping",
+				"inputs": [
+					"stoptyping",
+					"입력중지",
+					"그만",
+					"그만해",
+					"그만쳐",
+					"멈춰"
+				],
+				"need_arg": false,
+				"usage": "thisChannel.stopTyping()"
+			}
+		],
+		"short_usage": "디버그",
+		"usage": "디버그 기능",
+		"visible": true,
+		"public": false
+	},
+	{
+		"command": "ip",
+		"inputs": [
+			"ip",
+			"아이피"
+		],
+		"options": [],
+		"short_usage": "아이피 표시",
+		"usage": "아이피 표시",
+		"visible": true,
+		"public": false
+	},
+	{
+		"command": "dice",
+		"inputs": [
+			"dice",
+			"주사위",
+			"주",
+			"ㅈ",
+			"ㄱ",
+			"roll",
+			"롤",
+			"r",
+			"rr",
+			"dr"
+		],
+		"options": [
+			{
+				"name": "comment",
+				"inputs": [
+					"comment",
+					"c",
+					"주석",
+					"주",
+					"ㅊ",
+					"ㅈ",
+					"설명",
+					"コメント",
+					"説明"
+				],
+				"need_arg": true,
+				"usage": "값의 의미를 적어 표시합니다. (주석 띄어쓰기 불가, ＿를 사용해주세요. 주석을 복수개 달을 수도 있습니다.)"
+			},
+			{
+				"name": "sort",
+				"inputs": [
+					"sort",
+					"s",
+					"정렬"
+				],
+				"need_arg": false,
+				"usage": "주사위 값 정렬"
+			},
+			{
+				"name": "crit",
+				"inputs": [
+					"crit",
+					"fumble",
+					"크리티컬",
+					"크리",
+					"펌블"
+				],
+				"need_arg": false,
+				"usage": "크리, 펌블 표시"
+			}
+		],
+		"short_usage": "주사위 굴리기",
+		"usage": "봇이 주사위를 굴려줍니다.\n\n`(주사위 갯수)D(주사위 면체 수)`를 적어 굴릴수도 있습니다.\n\n주사위의 최솟값은 1입니다! 최댓값은 100이에염, 그 이상은 너무 커서...\n\n*사용가능 연산자 목록 참고 링크 : https://www.npmjs.com/package/expr-eval#expression-syntax*",
+		"visible": true,
+		"public": false
+	},
+	{
+		"command": "swpower",
+		"inputs": [
+			"swpower",
+			"swp",
+			"위력",
+			"위",
+			"威力"
+		],
+		"options": [
+			{
+				"name": "lookup",
+				"inputs": [
+					"lookup",
+					"l",
+					"table",
+					"t",
+					"테이블",
+					"위력표",
+					"표",
+					"ㅌ",
+					"ㅍ",
+					"テーブル",
+					"威力表"
+				],
+				"need_arg": false,
+				"usage": "주사위를 굴리지 않고 해당 위력표만을 보여줍니다."
+			},
+			{
+				"name": "comment",
+				"inputs": [
+					"comment",
+					"c",
+					"ㅊ",
+					"주석",
+					"주",
+					"ㅈ",
+					"설명",
+					"コメント",
+					"説明"
+				],
+				"need_arg": true,
+				"usage": "값의 의미를 적어 표시합니다. (주석 띄어쓰기 불가, ＿를 사용해주세요. 주석을 복수개 달을 수도 있습니다.)"
+			}
+		],
+		"short_usage": "소드월드2.0 위력 계산 기능",
+		"usage": "소드월드2.0의 위력테이블을 찾아 2D6을 굴려줍니다.\n\n수식 중간에 `[위력값]`을 적어넣어 계산할 수도 있습니다.\n\n*연산자 목록 참고 링크 : https://www.npmjs.com/package/expr-eval#expression-syntax*",
+		"visible": true,
+		"public": false
+	},
+	{
+		"command": "google",
+		"inputs": [
+			"google",
+			"구글",
+			"search",
+			"검색"
+		],
+		"options": [
+			{
+				"name": "quantity",
+				"inputs": [
+					"quantity",
+					"q",
+					"개수",
+					"갯수"
+				],
+				"need_arg": true,
+				"usage": "한 번에 몇 개의 검색결과를 보여줄지 정합니다. (기본값 3, 최댓값 10)"
+			},
+			{
+				"name": "page",
+				"inputs": [
+					"page",
+					"p",
+					"페이지",
+					"쪽"
+				],
+				"need_arg": true,
+				"usage": "몇 번째 페이지를 보여줄지 정합니다. (기본값 1)"
+			},
+			{
+				"name": "debug",
+				"inputs": [
+					"debug",
+					"디버그"
+				],
+				"need_arg": false,
+				"usage": "디버그용"
+			}
+		],
+		"short_usage": "구글 검색",
+		"usage": "구글 커스텀 검색 엔진으로 검색한 결과를 보여줍니다",
+		"visible": true,
+		"public": false
+	},
+	{
+		"command": "image",
+		"inputs": [
+			"image",
+			"이미지",
+			"사진",
+			"그림"
+		],
+		"options": [
+			{
+				"name": "index",
+				"inputs": [
+					"index",
+					"i",
+					"번호"
+				],
+				"need_arg": true,
+				"usage": "검색 결과의 몇 번째 이미지를 가져올지 정합니다."
+			},
+			{
+				"name": "detail",
+				"inputs": [
+					"detail",
+					"자세히",
+					"more",
+					"더"
+				],
+				"need_arg": false,
+				"usage": "이미지의 출처, 이미지의 URL도 같이 표시합니다."
+			},
+			{
+				"name": "debug",
+				"inputs": [
+					"debug",
+					"디버그"
+				],
+				"need_arg": false,
+				"usage": "디버그용"
+			}
+		],
+		"short_usage": "구글 이미지 검색",
+		"usage": "구글 커스텀 검색 엔진으로 이미지를 검색해옵니다.",
+		"visible": true,
+		"public": false
+	},
+	{
+		"command": "youtube",
+		"inputs": [
+			"youtube",
+			"유튜브",
+			"동영상",
+			"영상"
+		],
+		"options": [
+			{
+				"name": "index",
+				"inputs": [
+					"index",
+					"i",
+					"번호"
+				],
+				"need_arg": true,
+				"usage": "검색 결과의 몇 번째 이미지를 가져올지 정합니다."
+			},
+			{
+				"name": "detail",
+				"inputs": [
+					"detail",
+					"자세히",
+					"more",
+					"더"
+				],
+				"need_arg": false,
+				"usage": "이미지의 출처, 이미지의 URL도 같이 표시합니다."
+			},
+			{
+				"name": "debug",
+				"inputs": [
+					"debug",
+					"디버그"
+				],
+				"need_arg": false,
+				"usage": "디버그용"
+			}
+		],
+		"short_usage": "유튜브 검색",
+		"usage": "유튜브에서 구글합니다.",
+		"visible": true,
+		"public": false
+	},
+	{
+		"command": "namu",
+		"inputs": [
+			"namu",
+			"나무위키",
+			"나무"
+		],
+		"options": [
+			{
+				"name": "quantity",
+				"inputs": [
+					"quantity",
+					"q",
+					"갯수"
+				],
+				"need_arg": true,
+				"usage": "한 번에 몇 개의 검색결과를 보여줄지 정합니다. (기본값 1, 최댓값 10)"
+			},
+			{
+				"name": "page",
+				"inputs": [
+					"page",
+					"p",
+					"페이지",
+					"쪽"
+				],
+				"need_arg": true,
+				"usage": "몇 번째 페이지를 보여줄지 정합니다. (기본값 1)"
+			},
+			{
+				"name": "debug",
+				"inputs": [
+					"debug",
+					"디버그"
+				],
+				"need_arg": false,
+				"usage": "디버그용"
+			}
+		],
+		"short_usage": "나무위키 검색",
+		"usage": "나무위키에서 구글합니다.",
+		"visible": true,
+		"public": false
+	},
+	{
+		"command": "soundcloud",
+		"inputs": [
+			"soundcloud",
+			"사운드클라우드",
+			"사클",
+			"음악"
+		],
+		"options": [
+			{
+				"name": "index",
+				"inputs": [
+					"index",
+					"i",
+					"번호"
+				],
+				"need_arg": true,
+				"usage": "검색 결과의 몇 번째 이미지를 가져올지 정합니다."
+			},
+			{
+				"name": "detail",
+				"inputs": [
+					"detail",
+					"자세히",
+					"more",
+					"더"
+				],
+				"need_arg": false,
+				"usage": "이미지의 출처, 이미지의 URL도 같이 표시합니다."
+			},
+			{
+				"name": "debug",
+				"inputs": [
+					"debug",
+					"디버그"
+				],
+				"need_arg": false,
+				"usage": "디버그용"
+			}
+		],
+		"short_usage": "사운드 클라우드 검색",
+		"usage": "사운드클라우드에서 구글합니다.",
+		"visible": true,
+		"public": false
+	},
+	{
+		"command": "saucenao",
+		"inputs": [
+			"saucenao",
+			"소스나오",
+			"그림원본"
+		],
+		"options": [
+			{
+				"name": "last",
+				"inputs": [
+					"last",
+					"마지막",
+					"저거"
+				],
+				"need_arg": false,
+				"usage": "채널에 마지막으로 첨부된 이미지의 URL을 이용합니다"
+			}
+		],
+		"short_usage": "Saucenao 이미지 검색",
+		"usage": "입력한 이미지 URL의 Saucenao 이미지 검색 URL을 만들어줍니다.",
+		"visible": true,
+		"public": false
+	},
+	{
+		"command": "anime",
+		"inputs": [
+			"anime",
+			"애니",
+			"ohys"
+		],
+		"options": [
+			{
+				"name": "search",
+				"inputs": [
+					"search",
+					"s",
+					"검색",
+					"찾기"
+				],
+				"need_arg": false,
+				"usage": "(기본 동작) 키워드로 애니를 검색합니다, 키워드 없이 최신 목록을 확인할 수 있습니다."
+			},
+			{
+				"name": "list",
+				"inputs": [
+					"list",
+					"l",
+					"목록",
+					"구독목록"
+				],
+				"need_arg": false,
+				"usage": "채널에 구독된 애니 목록을 확인합니다"
+			},
+			{
+				"name": "add",
+				"inputs": [
+					"add",
+					"추가"
+				],
+				"need_arg": true,
+				"usage": "채널에 구독할 애니를 추가합니다 (추가하기 전에 검색으로 확인해주세요)"
+			},
+			{
+				"name": "remove",
+				"inputs": [
+					"remove",
+					"rm",
+					"삭제",
+					"delete"
+				],
+				"need_arg": true,
+				"usage": "채널에 구독된 애니를 삭제합니다 (추가된 내용을 그대로 입력)"
+			},
+			{
+				"name": "schedule",
+				"inputs": [
+					"schedule",
+					"sc",
+					"t",
+					"시간표",
+					"스케줄",
+					"표"
+				],
+				"need_arg": false,
+				"usage": "애니 시간표를 확인합니다. e, k, j 를 추가로 입력하여 영어, 한국어, 일본어 제목으로 표시를 바꿀 수 있습니다."
+			}
+		],
+		"short_usage": "Cryental 애니 기능",
+		"usage": "Cryental의 애니 DB 기능을 사용하여 검색하거나 알림을 설정합니다. [*Cryental's Ohys-raws API*](https://cryental.dev/services/anime/api/)",
+		"visible": true,
+		"public": true
+	},
+	{
+		"command": "meme",
+		"inputs": [
+			"meme",
+			"짤방",
+			"짤",
+			"밈",
+			"네타",
+			"ネタ"
+		],
+		"options": [
+			{
+				"name": "last",
+				"inputs": [
+					"last",
+					"마지막",
+					"저거",
+					"あれ"
+				],
+				"need_arg": false,
+				"usage": "채널에 마지막으로 첨부된 짤의 URL을 이용하여 짤을 등록합니다"
+			},
+			{
+				"name": "list",
+				"inputs": [
+					"list",
+					"목록",
+					"一覧"
+				],
+				"need_arg": false,
+				"usage": "채널에 등록된 짤 목록을 표시합니다"
+			}
+		],
+		"short_usage": "짤 표시 기능",
+		"usage": "짤을 등록하고 표시합니다",
+		"visible": true,
+		"public": true
+	}
+]
