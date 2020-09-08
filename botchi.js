@@ -59,7 +59,8 @@ const CSE_ID_JP = process.env.CSE_ID_JP;
  * @property	{string}	short_usage
  * @property	{string}	usage
  * @property	{boolean}	visible
- * @property	{boolean}	public	Whether public only or not
+ * @property	{boolean}	public
+ * @property	{boolean}	local
  */
 
 /**
@@ -88,10 +89,22 @@ const MSG_FIELDS_LIMIT = 25; // fields
 const MSG_VALUE_LIMIT = 1024; // field.value
 const MSG_EMBED_TOTAL_LIMIT = 6000;
 
+var BotName = "";
+
 const DICE_LIMIT = 200;
 
 /**
- *
+ * @typedef	{object}	SwPower
+ * @property	{number}	power
+ * @property	{Array<number>}	values
+ */
+
+/**
+ * @type	{Array<SwPower>}
+ */
+const SW_POWER_TABLE = require("./sw_power_table.json");
+
+/**
  * @enum	{string}
  */
 const CONSOLE_COLOR_CODE = {
@@ -327,7 +340,7 @@ function secsToString(iSecs) {
  * @param {number} faces	Faces
  * @returns	{Promise}	Rolled dices
  */
-function rollDices(dices, faces) {
+function rollDicesP(dices, faces) {
 	let nDices = Number(dices);
 	let nFaces = Number(faces);
 	return new Promise((resolve, reject) => {
@@ -343,6 +356,68 @@ function rollDices(dices, faces) {
 			resolve(diceResult);
 		}
 	});
+}
+
+/**
+ * Roll dices and just return array
+ * @param {*} dices
+ * @param {*} faces
+ * @returns	{Array<number>}
+ */
+function rollDices(dices, faces) {
+	let nDices = Number(dices);
+	let nFaces = Number(faces);
+	let diceResult = [];
+	for (let i = 0; i < nDices; i++) {
+		diceResult.push(Math.floor(Math.random() * nFaces + 1));
+	}
+	return diceResult;
+}
+
+/**
+ * @typedef	{object}	diceExpString
+ * @property	{string}	expr
+ * @property	{Array<number>}	dices
+ */
+
+/**
+ * Roll dices in an expression
+ * @param {string} iExp
+ * @returns	{diceExpString}
+ */
+function findAndRollDice(iExp) {
+	let iD = tExpr.toLowerCase().indexOf("d");
+	console.log(`findAndRollDice() : iD : ${iD}`);
+	if (iD >= 0) {
+		let dices = "";
+		let faces = "";
+
+		let iStart = iD - 1;
+		let iEnd = iD + 1;
+
+		while (!isNaN(Number(tExpr[iStart]))) {
+			iStart--;
+		}
+		while (!isNaN(Number(tExpr[iEnd]))) {
+			iEnd++;
+		}
+
+		dices = tExpr.substring(++iStart, iD);
+		faces = tExpr.substring(iD + 1, iEnd);
+
+		let diceArr = rollDices(dices.length > 0 ? dices : 1, faces.length > 0 ? faces : 6);
+		let resStr = `${tExpr.substring(0, iStart)}(${dices}d)`;
+
+		let postRoll = findAndRollDice(tExpr.substring(iEnd, tExpr.length));
+		diceArr.push(postRoll.dices);
+
+		return {
+			expr: resStr,
+			dices: diceArr,
+		};
+	} else {
+		return { expr: iExp, dices: [] };
+	}
 }
 
 /**
@@ -978,27 +1053,30 @@ function stopTypingWithMsg(sentMsg, force) {
 /* ~~~~ Event functions ~~~~ */
 /**
  * Check whether the message called bot or not
- * @param {Discord.Message} theMsg	The incomming message to check
+ * @param {Discord.Message} callMsg	The incomming message to check
  */
-function checkBotCall(theMsg) {
-	if (theMsg.author.id != Bot.user.id) {
-		switch (theMsg.channel.type) {
+function checkBotCall(callMsg) {
+	if (callMsg.author.id != Bot.user.id) {
+		switch (callMsg.channel.type) {
 			default:
 			case "dm":
-				handleCall(theMsg, theMsg.content);
+				handleCall(callMsg, callMsg.content);
 				break;
 			case "text":
 			case "group":
-				var botName = Bot.user.username;
-				if (theMsg.channel.type === "text" && theMsg.guild.me.nickname != undefined && theMsg.guild.me.nickname != null) {
+				/*let botName = Bot.user.username;
+				if (theMsg.channel.type === "text" && theMsg.guild.me.nickname != undefined && theMsg.guild.me.nickname !== null) {
 					botName = theMsg.guild.me.nickname;
-				}
-				if (theMsg.content.startsWith(BOT_PREFIX)) {
-					handleCall(theMsg, theMsg.content.replace(BOT_PREFIX, "").trim());
-				} else if (theMsg.content.startsWith(botName)) {
-					handleCall(theMsg, theMsg.content.replace(botName, "").trim());
-				} else if (theMsg.mentions.users.has(BOT_SELF_ID)) {
-					handleCall(message, message.content.replace(`<@!${BOT_SELF_ID}>`, "").trim());
+				}*/
+
+				if (callMsg.content.startsWith(BOT_PREFIX)) {
+					handleCall(callMsg, callMsg.content.replace(BOT_PREFIX, "").trim());
+				} else if (callMsg.content.startsWith(callMsg.guild.me.nickname)) {
+					handleCall(callMsg, callMsg.content.replace(callMsg.guild.me.nickname, "").trim());
+				} else if (callMsg.content.startsWith(BotName)) {
+					handleCall(callMsg, callMsg.content.replace(BotName, "").trim());
+				} else if (callMsg.mentions.users.has(BOT_SELF_ID)) {
+					handleCall(callMsg, callMsg.content.replace(`<@!${BOT_SELF_ID}>`, "").trim());
 				}
 				/* Discord.Message.isMentioned() DEPRECATED!!
 				 * else if (message.isMentioned(BOT_SELF_ID)) {
@@ -1017,7 +1095,7 @@ function checkBotCall(theMsg) {
 const handleArgsErrorType = {
 	NO_TEXT: 1,
 	WRONG_COMMAND: 2,
-	NOT_PUBLIC: 3,
+	WRONG_ROLE: 3,
 	WRONG_OPTION: 4,
 	NO_OPTION_ARG: 5,
 };
@@ -1096,9 +1174,9 @@ function handleArgs(callText) {
 					type: handleArgsErrorType.WRONG_COMMAND,
 					text: rawArgsArray[0],
 				});
-			} else if (foundCommand.public && BOT_SELF_ID != BOT_ID_PUBLIC) {
+			} else if ((!foundCommand.public || BOT_SELF_ID != BOT_ID_PUBLIC) && (!foundCommand.local || BOT_SELF_ID != BOT_ID_LOCAL)) {
 				reject({
-					type: handleArgsErrorType.NOT_PUBLIC,
+					type: handleArgsErrorType.WRONG_ROLE,
 					text: rawArgsArray[0],
 				});
 			} else {
@@ -1200,7 +1278,7 @@ async function handleCall(callMsg, callText) {
 				answer(callMsg, `🤔❓ *${getKoreanWithMaker(nHandleArgsError.text, "* ", "는")} 모르는 명령어다...`);
 				return;
 				break;
-			case handleArgsErrorType.NOT_PUBLIC:
+			case handleArgsErrorType.WRONG_ROLE:
 				answer(callMsg, `🤤 *${nHandleArgsError.text}* 명령어는 내가 처리할 수 없다...`);
 				return;
 				break;
@@ -1326,20 +1404,36 @@ async function handleCall(callMsg, callText) {
 				}
 			}
 
+			let uniqueLocalIps = localIps.filter((aLocalIp) => aLocalIp !== publicIp);
+			//let ipResult = `>>> 외부 주소 = \`${publicIp}\``;
+			let ipResult = "";
+			for (let anUniqueLocalIp of uniqueLocalIps) {
+				if (anUniqueLocalIp.startsWith("192")) {
+					ipResult = `\n내부 주소 = \`${anUniqueLocalIp}\`${ipResult}`;
+				} else {
+					ipResult = `${ipResult}\n가상 주소? = \`${anUniqueLocalIp}\``;
+				}
+			}
+			ipResult = `>>> 외부 주소 = \`${publicIp}\`${ipResult}`;
+			/*
 			let localIpStr = "";
 
 			for (const anIp of localIps) {
 				localIpStr += "내부 아이피 = `" + anIp + "`\n";
 			}
-			answer(callMsg, `>>> ${localIpStr.trim()}\n외부 아이피 = \`${publicIp}\``);
-
+			
+			*/
+			answer(callMsg, ipResult);
 			break;
 		case "dice":
 			callMsg.channel.startTyping();
+
 			let diceString = hInput.arg.toLowerCase();
+			/*
 			let diceParams = diceString.split("d");
 
-			rollDices(diceParams != undefined && diceParams[0].length > 0 ? diceParams[0] : 1, diceParams.length > 1 ? diceParams[1] : 6)
+			
+			rollDicesP(diceParams != undefined && diceParams[0].length > 0 ? diceParams[0] : 1, diceParams.length > 1 ? diceParams[1] : 6)
 				.then((dices) => {
 					if (dices.length === 1) {
 						answer(callMsg, `🎲 <@!${callMsg.author.id}>, 주사위를 굴려 **${dices[0]}**`).then((sentMsg) => {
@@ -1393,6 +1487,9 @@ async function handleCall(callMsg, callText) {
 						});
 					}
 				});
+				*/
+			let expStr = findAndRollDice(diceString);
+
 			break;
 		case "swpower":
 			answer(callMsg, `🤤 아직 준비 못했다구...`);
@@ -1583,6 +1680,7 @@ Bot.on("message", (message) => {
 
 Bot.on("ready", () => {
 	BOT_SELF_ID = Bot.user.id;
+	BotName = Bot.user.username;
 	// prepareCommands();
 	printLog(`${CONSOLE_COLOR_CODE.BgGreen}[LOG]${CONSOLE_COLOR_CODE.Reset}  Logged in`, undefined, {
 		embed: {
