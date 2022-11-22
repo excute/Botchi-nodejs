@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/Excute/Botchi/issues"
   },
-  "homepage": "https://github.com/Excute/Botchi#readme"
+  "homepage": "https://github.com/Excute/Botchi#readme",
+  "dependencies": {
+    "discord.js": "^14.6.0"
+  }
 }
