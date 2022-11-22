@@ -1,0 +1,23 @@
+{
+  "name": "botchi",
+  "version": "0.0.1",
+  "description": "Private discord bot",
+  "main": "main.js",
+  "scripts": {
+    "test": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Excute/Botchi.git"
+  },
+  "keywords": [
+    "Excute",
+    "DiscordJS"
+  ],
+  "author": "Excute",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Excute/Botchi/issues"
+  },
+  "homepage": "https://github.com/Excute/Botchi#readme"
+}
